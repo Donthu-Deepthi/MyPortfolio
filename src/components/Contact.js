@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import emailjs from "@emailjs/browser";
 import { toast } from "react-toastify";
 import { FaEnvelope, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 import SocialHandles from "./SocialHandles";
@@ -8,25 +7,31 @@ import ContactData from "../data/contact";
 const Contact = () => {
   const formRef = useRef();
   const handleSubmit = (e) => {
-    e.preventDefault();
-    emailjs
-      .sendForm(
-        "service_9inzcz7",
-        "template_lg8ahdf",
-        formRef.current,
-        "_8hE7B_7PzOSTxPxm"
-      )
-      .then(
-        () => {
-          toast.success("Message sent successfully");
-          e.target.reset();
-        },
-        (error) => {
-          console.log(error.text);
-          toast.error("Unable to send message!");
-        }
-      );
-  };
+  e.preventDefault();
+
+  const formURL =
+    "https://docs.google.com/forms/u/0/d/e/1FAIpQLSf6dggPmcpQWUzkeRS4f70rMBnI1I-_-tPFMoDAIgjAJ24gyQ/formResponse";
+
+  const formData = new FormData();
+  formData.append("entry.2005620554", e.target.user_name.value); // Name
+  formData.append("entry.1045781291", e.target.user_email.value); // Email
+  formData.append("entry.1065046570", e.target.message.value);    // Message
+
+  fetch(formURL, {
+    method: "POST",
+    body: formData,
+    mode: "no-cors"
+  })
+    .then(() => {
+      toast.success("Message sent successfully");
+      e.target.reset();
+    })
+    .catch((err) => {
+      console.error("Error submitting form", err);
+      toast.error("Unable to send message!");
+    });
+};
+
 
   return (
     <section className="text-gray-600 body-font ">
